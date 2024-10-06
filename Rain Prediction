@@ -1,0 +1,86 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+import calendar
+
+# Step 1: Generate synthetic historical weather data (2010-2024)
+np.random.seed(42)
+
+# Create 15 years of historical data (assuming 365 days per year)
+years = np.arange(2010, 2025)
+days_per_year = 365
+total_days = len(years) * days_per_year
+
+# Features for weather prediction: temperature, humidity, wind speed, pressure, etc.
+data = {
+    'year': np.repeat(years, days_per_year),
+    'day_of_year': np.tile(np.arange(1, days_per_year + 1), len(years)),
+    'temperature': np.random.normal(15, 10, total_days),  # degrees Celsius
+    'humidity': np.random.uniform(30, 100, total_days),   # percentage
+    'wind_speed': np.random.uniform(0, 20, total_days),   # km/h
+    'pressure': np.random.uniform(1000, 1025, total_days),# hPa
+}
+
+# Target variable: rain (0 = no rain, 1 = rain)
+rain = (data['humidity'] > 70) & (data['temperature'] < 20) & (data['wind_speed'] < 10)
+rain = np.where(np.random.rand(total_days) > 0.7, rain, np.random.randint(0, 2, total_days))  # Add noise
+
+# Convert data to a DataFrame
+df = pd.DataFrame(data)
+df['rain'] = rain
+
+# Step 2: Split the data into training and test sets
+X = df[['temperature', 'humidity', 'wind_speed', 'pressure']]
+y = df['rain']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 3: Train a logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 4: Evaluate the model (accuracy on test data)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Model Accuracy: {accuracy:.2f}')
+
+# Step 5: Generate synthetic data for 2025
+days_2025 = 365
+data_2025 = {
+    'day_of_year': np.arange(1, days_2025 + 1),
+    'temperature': np.random.normal(15, 10, days_2025),
+    'humidity': np.random.uniform(30, 100, days_2025),
+    'wind_speed': np.random.uniform(0, 20, days_2025),
+    'pressure': np.random.uniform(1000, 1025, days_2025),
+}
+
+df_2025 = pd.DataFrame(data_2025)
+
+# Predict rain and get probabilities for 2025
+df_2025['rain_risk'] = model.predict(df_2025[['temperature', 'humidity', 'wind_speed', 'pressure']])
+df_2025['rain_probability'] = model.predict_proba(df_2025[['temperature', 'humidity', 'wind_speed', 'pressure']])[:, 1] * 100
+
+# Step 6: Add dates (1st January 2025 - 31st December 2025)
+# Convert 'day_of_year' into actual date
+df_2025['date'] = pd.date_range(start="2025-01-01", periods=days_2025)
+
+# Add the day of the week (e.g., Monday, Tuesday, etc.)
+df_2025['day_of_week'] = df_2025['date'].dt.day_name()
+
+# Step 7: Format the output to display parameters and prediction for each day
+df_2025['rain_prediction'] = df_2025['rain_risk'].apply(lambda x: 'Rain' if x == 1 else 'No Rain')
+
+# Organize the output for better readability
+df_2025_output = df_2025[['date', 'day_of_week', 'temperature', 'humidity', 'wind_speed', 'pressure', 'rain_prediction', 'rain_probability']]
+
+# Display the formatted result
+print("\nRain Prediction for 2025:")
+print(df_2025_output.head())  # Show the first 5 days as a sample
+
+# Optionally: Save the result to a CSV file
+df_2025_output.to_csv('rain_prediction_2025.csv', index=False)
+
+# Display the entire DataFrame for all days of 2025 (if needed)
+# print(df_2025_output)
