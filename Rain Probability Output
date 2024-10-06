@@ -1,0 +1,11 @@
+        date     day_of_week  temperature   humidity  wind_speed     pressure  rain_prediction  rain_probability
+0 2025-01-01     Wednesday      31.37       79.26        7.63        1009.77     No Rain         40.85%
+1 2025-01-02      Thursday      30.24       32.33       14.61        1018.85     No Rain         28.29%
+2 2025-01-03        Friday      15.13       38.09        4.26        1008.08     No Rain         40.31%
+3 2025-01-04      Saturday      17.04       84.32        7.51        1003.20     No Rain         45.66%
+4 2025-01-05        Sunday       1.63       86.91       18.21        1009.67     No Rain         41.70%
+5 2025-01-06        Monday      13.44       71.47        2.29        1022.08     No Rain         48.23%
+6 2025-01-07       Tuesday      37.73       70.72       14.91        1010.14     No Rain         32.44%
+7 2025-01-08     Wednesday      18.42       82.47       14.05        1020.84     No Rain         39.70%
+8 2025-01-09      Thursday       9.40       93.43        2.61        1009.29        Rain         53.21%
+9 2025-01-10        Friday      19.16       59.48       13.77        1007.03     No Rain         35.87%
